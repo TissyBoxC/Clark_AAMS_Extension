@@ -35,15 +35,16 @@ jobs:
 
       - name: 检查必备文件
         run: |
-          for f in manifest.json schools.js content.js popup.html popup.js popup.css; do
+          for f in manifest.json schools.js content.js bridge.js popup.html popup.js popup.css; do
             [ -f "$f" ] || { echo "缺少 $f"; exit 1; }
           done
 
       - name: 打包
         run: |
+          # 只打扩展运行需要的文件，不要 .git / .github / README 之外的杂物
           mkdir -p out
           zip -r "out/clark-aams-extension-${{ steps.version.outputs.version }}.zip" \
-            manifest.json schools.js content.js popup.html popup.js popup.css icons README.md
+            manifest.json schools.js content.js bridge.js popup.html popup.js popup.css icons
 
       - uses: actions/upload-artifact@v4
         with:
