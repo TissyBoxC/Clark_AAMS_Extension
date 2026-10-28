@@ -1,0 +1,61 @@
+name: Release Extension
+
+# 打一个 v* 标签就自动打包扩展并发布 Release，
+# 产物是可直接加载到 Chrome 的 zip。
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 读取版本号
+        id: version
+        run: |
+          VERSION=$(jq -r .version manifest.json)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "扩展版本 $VERSION"
+
+      - name: 校验版本号与标签一致
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          if [ "$TAG" != "${{ steps.version.outputs.version }}" ]; then
+            echo "标签 v$TAG 与 manifest.json 里的 ${{ steps.version.outputs.version }} 不一致"
+            exit 1
+          fi
+
+      - name: 检查必备文件
+        run: |
+          for f in manifest.json schools.js content.js popup.html popup.js popup.css; do
+            [ -f "$f" ] || { echo "缺少 $f"; exit 1; }
+          done
+
+      - name: 打包
+        run: |
+          mkdir -p out
+          zip -r "out/clark-aams-extension-${{ steps.version.outputs.version }}.zip" \
+            manifest.json schools.js content.js popup.html popup.js popup.css icons README.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clark-aams-extension
+          path: out/*.zip
+
+      - name: 发布
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/*.zip
+          name: 珂拉课程表导入扩展 v${{ steps.version.outputs.version }}
+          body: |
+            下载 zip 解压后，在 `chrome://extensions` 打开开发者模式，
+            点「加载已解压的扩展程序」选中解压出的文件夹即可。
