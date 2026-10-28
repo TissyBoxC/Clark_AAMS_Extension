@@ -1,0 +1,146 @@
+/*
+ * 扩展弹窗样式。
+ *
+ * 尺寸很小（360px 宽），所以只保留一套字号：
+ * 正文 14px、标题 15px、次要 13px。层级靠字重和颜色，不靠字号差 1px。
+ */
+
+:root {
+  --bg: #fff9fa;
+  --surface: #ffffff;
+  --line: #f2dde4;
+  --text: #3f2a33;
+  --muted: #7a626c;
+  --primary: #c93c7d;
+  --primary-strong: #ab2f69;
+  --primary-soft: #ffeef3;
+  --success: #2f7d5b;
+  --radius-card: 20px;
+  --radius-control: 14px;
+  --shadow-card: 0 8px 24px rgba(194, 91, 128, 0.1);
+  --shadow-button: 0 6px 16px rgba(201, 60, 125, 0.26);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.6 -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 18px 22px 12px;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.brand-sub {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stage {
+  flex: 1;
+  padding: 4px 22px 20px;
+}
+
+.state-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.state-title.is-success {
+  color: var(--success);
+}
+
+.state-detail {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.state-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.primary {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  transition: transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.primary:hover {
+  background: var(--primary-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(171, 47, 105, 0.3);
+}
+
+.primary:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.primary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.foot {
+  padding: 12px 22px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.link {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--primary);
+}
+
+/* 用户开了「减少动效」就不做位移 */
+@media (prefers-reduced-motion: reduce) {
+  .primary {
+    transition: background-color 200ms ease;
+  }
+
+  .primary:hover,
+  .primary:active {
+    transform: none;
+  }
+}
