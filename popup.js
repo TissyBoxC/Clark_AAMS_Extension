@@ -45,6 +45,12 @@ async function collectFromTab(tabId) {
 
 /** 调后端解析接口。 */
 async function sendToService(school, collected) {
+  /*
+   * 课表可能在外层页面，也可能在 iframe 里（正方常见）。
+   * 两个都传过去，由后端按学校解析器自己决定用哪一份。
+   */
+  const frames = Array.isArray(collected.frames) ? collected.frames : [];
+
   const response = await fetch(`${SERVICE_ORIGIN}/api/v1/imports/courses/html`, {
     method: 'POST',
     credentials: 'include',
@@ -53,6 +59,7 @@ async function sendToService(school, collected) {
       school: school.id,
       schoolName: school.name,
       html: collected.html,
+      frames: frames.map((frame) => ({ src: frame.src, id: frame.id, html: frame.html })),
     }),
   });
 
