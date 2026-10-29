@@ -113,10 +113,10 @@ async function main() {
 
   renderIdle(
     `准备好了`,
-    `会从「${school.name}」的课表页读取内容，整理后放进你的课表。`,
+    `会读取你打开的「${school.name}」课表页，整理后放进你的课表。`,
     '导入现在这一页',
     async () => {
-      render(`<p class="state-text">正在读取课表…</p>`);
+      render(`<p class="state-text">正在读取这一页…</p>`);
 
       let collected;
       try {
@@ -124,7 +124,7 @@ async function main() {
       } catch {
         renderIdle(
           '没能读到这一页',
-          '这个页面可能还没加载完。等课表显示出来，再点一次。',
+          '这一页可能还没加载完，或者刚刚跳转过。等页面稳定下来再点一次。',
           '再试一次',
           () => main(),
         );
@@ -133,15 +133,15 @@ async function main() {
 
       if (!collected?.ok) {
         renderIdle(
-          '这一页没找到课表',
-          '先在网站里点到「课表」或「我的课表」，等表格出现，再来点导入。',
+          '没能读到这一页',
+          '这一页没有可读取的内容。等页面显示完整后再点一次。',
           '再试一次',
           () => main(),
         );
         return;
       }
 
-      render(`<p class="state-text">正在整理 ${collected.rows} 行课表…</p>`);
+      render(`<p class="state-text">正在整理课表…</p>`);
 
       try {
         const payload = await sendToService(school, collected);
